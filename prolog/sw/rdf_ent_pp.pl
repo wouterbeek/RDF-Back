@@ -1,9 +1,9 @@
 :- module(
   rdf_ent_pp,
   [
-    rdf_pp_argument//3, % +Premises, +Rule, +Conclusion
-    rdf_pp_argument//4, % +Premises, +Rule, +Conclusion, +Options
-    rule_label/2        % +Rule, -Label
+    rdf_pp_argument//4, % +Premises, +Rule, +Bindings, +Conclusion
+    rdf_pp_argument//5, % +Premises, +Rule, +Bindings, +Conclusion, +Options
+    rdf_pp_rule//2      % +Rule, +Bindings
   ]
 ).
 
@@ -21,9 +21,10 @@
 
 
 
-%! rdf_pp_argument(+Premises:list(rdf_gen_triple), +Rule:compound,
+
+%! rdf_pp_argument(+Premises:list(rdf_gen_triple), +Rule:compound, +Bindings:list,
 %!                 +Conclusion:rdf_gen_triple)// is det.
-%! rdf_pp_argument(+Premises:list(rdf_gen_triple), +Rule:compound,
+%! rdf_pp_argument(+Premises:list(rdf_gen_triple), +Rule:compound, +Bindings:list,
 %!                 +Conclusion:rdf_gen_triple, +Options:dict)// is det.
 %
 % [P] rdfs:subClassOf     rdfs:range      [C] rdfs:Class
@@ -35,16 +36,17 @@
 %
 %   * indent(nonneg) Default is 0.
 
-rdf_pp_argument(Premises, Rule, Conclusion) -->
-  rdf_pp_argument(Premises, Rule, Conclusion, _{indent: 0}).
+rdf_pp_argument(Premises, Rule, Bindings, Conclusion) -->
+  rdf_pp_argument(Premises, Rule, Bindings, Conclusion, _{indent: 0}).
 
 
-rdf_pp_argument(Premises, Rule, Conclusion, Options) -->
+rdf_pp_argument(Premises, Rule, Bindings, Conclusion, Options) -->
   indent_(Options),
-  rule(Rule),
+  rdf_pp_rule(Rule, Bindings),
+  " ",
   conclusion(Conclusion),
   nl,
-  premises(Premises, Options).
+  'premise*'(Premises, Options).
 
 conclusion(TP) -->
   rdf_dcg_generalized_triple_pattern(TP).
@@ -53,25 +55,37 @@ indent_(Options) -->
   {get_dict(indent, Options, N)},
   indent(N).
 
-premises([H|T], Options) --> !,
+'premise*'([H|T], Options) --> !,
   indent_(Options),
   premise(H),
   nl,
-  premises(T, Options).
-premises([], _) --> "".
+  'premise*'(T, Options).
+'premise*'([], _) --> "".
 
 premise(TP) -->
   rdf_dcg_generalized_triple_pattern(TP).
 
-rule(Rule) -->
-  {rule_label(Rule, Label)},
+
+
+%! rdf_pp_rule(+Rule:compound, +Bindings:list(compound))// is det.
+
+rdf_pp_rule(Rule, Bindings) -->
   "[",
-  atom(Label),
-  "] ".
+  term(Rule),
+  ({Bindings == []} -> "" ; ":", 'binding+'(Bindings)),
+  "]".
 
+binding(X=Y) -->
+  term(X),
+  "=",
+  rdf_dcg_term_or_var(Y).
 
+'binding+'([H|T]) --> !,
+  binding(H),
+  'binding*'(T).
 
-%! rule_label(+Rule:compound, -Label:string) is det.
-
-rule_label(Rule, Label) :-
-  format(string(Label), "~w", [Rule]).
+'binding*'([H|T]) --> !,
+  ",",
+  binding(H),
+  'binding*'(T).
+'binding*'([]) --> "".

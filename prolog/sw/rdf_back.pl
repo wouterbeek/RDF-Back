@@ -10,13 +10,21 @@
 
 /** <module> RDF(S) entailment through backward chaining
 
+# Configuration
+
 You must load the axiom modules you want to use _after_ you have
 loaded your backends.  This is specifically needed for the RDF and
 RDFS axiom, which are more/less plentyfull based on the data over
 which entailment is performed.
 
+# Generalized RDF
+
 Notice that not all RDF(S) entailments can be expressed in RDF; some
 require generalized RDF.
+
+# Debugging
+
+Enable debug messages with `debug(rdf_back)'.
 
 ---
 
@@ -24,14 +32,16 @@ require generalized RDF.
 @version 2018
 */
 
-:- use_module(library(debug)).
+:- use_module(library(apply)).
+:- use_module(library(lists)).
 
 :- use_module(library(dcg)).
+:- use_module(library(debug_ext)).
 :- use_module(library(sw/rdf_ent_pp)).
 :- use_module(library(sw/rdf_prefix)).
+:- use_module(library(sw/rdf_print)).
 :- use_module(library(sw/rdf_term)).
-
-:- debug(rdf_back).
+:- use_module(library(term_ext)).
 
 :- rdf_meta
    rdf:axiom(?, r, r, o),
@@ -68,32 +78,26 @@ rdf_back(S, P, O) :-
 rdf_back(S, P, O, Tree) :-
   rdf_back(rdf(S,P,O), Tree).
 
-rdf_back_(Hist1, Conclusion, t(Conclusion,Rule,SubTrees)) :-
-  copy_term(Conclusion, Item),
-  rdf_back_history_(Hist1, Item, Hist2),
+rdf_back_(Hist1, Conclusion, t(TP,Rule,Bindings,SubTrees)) :-
+  copy_term(Conclusion, TP),
+  update_history(Hist1, TP, Hist2),
   rdf:rule(Rule, Conclusion, Premises),
+  groundsort(Premises, SortedPremises),
+  unifiable(TP, Conclusion, Bindings),
   (   debugging(rdf_back)
   ->  length(Hist1, N),
-      dcg_with_output_to(
-        user_output,
-        rdf_pp_argument(Premises, Rule, Conclusion, _{indent: N})
+      debug_phrase(
+        rdf_back,
+        rdf_pp_argument(SortedPremises, Rule, Bindings, TP, _{indent: N})
       )
   ;   true
   ),
-  maplist(rdf_back_(Hist2), Premises, SubTrees).
+  maplist(rdf_back_(Hist2), SortedPremises, SubTrees).
 
-% If `X' is an instance of a Triple Fragment in `L1', then replace
-% that Triple Fragment with `X'.
-rdf_back_history_(T, X, L) :-
-  X =.. [rdf|L1],
-  rdf_back_history_list_(L1, [x,y,z], L2),
-  Y =.. [rdf|L2],
-  (memberchk(Y, T) -> fail ; L = [Y|T]).
-
-rdf_back_history_list_([H1|T1], [H2|T2], [H1|T3]) :-
-  var(H1), !,
-  H1 = H2,
-  rdf_back_history_list_(T1, T2, T3).
-rdf_back_history_list_([H1|T1], L2, [H1|T3]) :- !,
-  rdf_back_history_list_(T1, L2, T3).
-rdf_back_history_list_([], _, []).
+update_history(Hist, Generic, [Generic|Hist]) :-
+  (   member(Specific, Hist),
+      subsumes_term(Generic, Specific)
+  ->  debug(rdf_back, "❌", []),
+      fail
+  ;   true
+  ).
