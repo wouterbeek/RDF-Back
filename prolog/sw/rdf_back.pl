@@ -35,6 +35,7 @@ Enable debug messages with `debug(rdf_back)'.
 
 :- use_module(library(apply)).
 :- use_module(library(lists)).
+%:- use_module(library(tabling)).
 
 :- use_module(library(dcg)).
 :- use_module(library(debug_ext)).
@@ -52,6 +53,8 @@ Enable debug messages with `debug(rdf_back)'.
    rdf_back_triple(r, r, o),
    rdf_back_triple(r, r, o, -),
    rdf:rule(?, t, t).
+
+%:- table rdf_back_/4.
 
 rdf:rule(axiom(Module), rdf(S, P, O), []) :-
   rdf:axiom(Module, S, P, O).
