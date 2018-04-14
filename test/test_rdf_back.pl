@@ -23,6 +23,8 @@
 
 
 test :-
-  rdf_back(rdf(rdfs:'Class',rdf:type,rdfs:'Class'), Tree),
-  writeln(Tree),
-  rdf_export_tree(Tree).
+  rdf_back(
+    rdf(rdfs:'Class',rdf:type,rdfs:'Class'),
+    _,
+    _{bindings: true, debug: false, sort_premises: false}
+  ).

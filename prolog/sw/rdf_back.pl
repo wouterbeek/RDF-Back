@@ -1,10 +1,11 @@
 :- module(
   rdf_back,
   [
-    rdf_back/1, % ?Triple
-    rdf_back/2, % ?Triple, -Tree
-    rdf_back/3, % ?S, ?P, ?O
-    rdf_back/4  % ?S, ?P, ?O, -Tree
+    rdf_back/1,        % ?Triple
+    rdf_back/2,        % ?Triple, -Tree
+    rdf_back/3,        % ?Triple, -Tree, +Options
+    rdf_back_triple/3, % ?S, ?P, ?O
+    rdf_back_triple/4  % ?S, ?P, ?O, -Tree
   ]
 ).
 
@@ -47,8 +48,9 @@ Enable debug messages with `debug(rdf_back)'.
    rdf:axiom(?, r, r, o),
    rdf_back(t),
    rdf_back(t, -),
-   rdf_back(r, r, o),
-   rdf_back(r, r, o, -),
+   rdf_back(t, -, +),
+   rdf_back_triple(r, r, o),
+   rdf_back_triple(r, r, o, -),
    rdf:rule(?, t, t).
 
 rdf:rule(axiom(Module), rdf(S, P, O), []) :-
@@ -60,39 +62,47 @@ rdf:rule(axiom(Module), rdf(S, P, O), []) :-
 
 %! rdf_back(?Triple:rdf_triple) is nondet.
 %! rdf_back(?Triple:rdf_triple, -Tree:compound) is nondet.
-%! rdf_back(?S:rdf_nonliteral, ?P:iri, ?O:rdf_term) is nondet.
-%! rdf_back(?S:rdf_nonliteral, ?P:iri, ?O:rdf_term, -Tree:compound) is nondet.
+%! rdf_back(?Triple:rdf_triple, -Tree:compound, +Options:dict) is nondet.
+%
+% The following options are supported:
+%
+%   * sort_premises(+boolean)
+%
+%     Default is `false'.
 
 rdf_back(Conclusion) :-
   rdf_back(Conclusion, _).
 
 
 rdf_back(Conclusion, Tree) :-
-  rdf_back_([], Conclusion, Tree).
+  rdf_back(Conclusion, Tree, _{}).
 
 
-rdf_back(S, P, O) :-
-  rdf_back(rdf(S,P,O), _).
+rdf_back(Conclusion, Tree, Options) :-
+  rdf_back_(Options, [], Conclusion, Tree).
 
 
-rdf_back(S, P, O, Tree) :-
-  rdf_back(rdf(S,P,O), Tree).
-
-rdf_back_(Hist1, Conclusion, t(TP,Rule,Bindings,SubTrees)) :-
-  copy_term(Conclusion, TP),
-  update_history(Hist1, TP, Hist2),
-  rdf:rule(Rule, Conclusion, Premises),
-  groundsort(Premises, SortedPremises),
-  unifiable(TP, Conclusion, Bindings),
-  (   debugging(rdf_back)
+rdf_back_(Options, Hist1, Conclusion, t(TP,Rule,Bindings,SubTrees)) :-
+  (get_dict(bindings, Options, true) -> copy_term(Conclusion, TP) ; true),
+  update_history(Hist1, Conclusion, Hist2),
+  rdf:rule(Rule, Conclusion, Premises0),
+  (   get_dict(sort_premises, Options, true)
+  ->  groundsort(Premises0, Premises)
+  ;   Premises = Premises0
+  ),
+  (   get_dict(bindings, Options, true)
+  ->  unifiable(TP, Conclusion, Bindings)
+  ;   Bindings = []
+  ),
+  (   get_dict(debug, Options, true)
   ->  length(Hist1, N),
       debug_phrase(
         rdf_back,
-        rdf_pp_argument(SortedPremises, Rule, Bindings, TP, _{indent: N})
+        rdf_pp_argument(Premises, Rule, Bindings, TP, _{indent: N})
       )
   ;   true
   ),
-  maplist(rdf_back_(Hist2), SortedPremises, SubTrees).
+  maplist(rdf_back_(Options, Hist2), Premises, SubTrees).
 
 update_history(Hist, Generic, [Generic|Hist]) :-
   (   member(Specific, Hist),
@@ -101,3 +111,15 @@ update_history(Hist, Generic, [Generic|Hist]) :-
       fail
   ;   true
   ).
+
+
+
+%! rdf_back_triple(?S:rdf_nonliteral, ?P:iri, ?O:rdf_term) is nondet.
+%! rdf_back_triple(?S:rdf_nonliteral, ?P:iri, ?O:rdf_term, -Tree:compound) is nondet.
+
+rdf_back_triple(S, P, O) :-
+  rdf_back_triple(S, P, O, _).
+
+
+rdf_back_triple(S, P, O, Tree) :-
+  rdf_back(rdf(S,P,O), Tree).

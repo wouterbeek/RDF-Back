@@ -1,4 +1,4 @@
 #+TITLE: RDF-Back
 #+AUTHOR: Wouter Beek
 
-RDF(S) entailment through backward-chaning.
+RDF(S) entailment through backward chaining.
