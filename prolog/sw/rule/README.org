@@ -1,0 +1,5 @@
+#+TITLE: Rules for RDF(S) entailment
+#+AUTHOR: Wouter Beek
+
+You can custom-tailor the coverage of your reasoner by including only
+those modules whose rules you want to use.

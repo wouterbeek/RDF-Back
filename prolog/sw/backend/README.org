@@ -1,0 +1,5 @@
+#+TITLE: Backends for RDF(S) entailment
+#+AUTHOR: Wouter Beek
+
+You can custom-tailor the coverage of your reasoner by including only
+those modules whose backend you want to use.
