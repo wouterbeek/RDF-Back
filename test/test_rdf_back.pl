@@ -12,20 +12,16 @@
 */
 
 :- use_module(library(sw/rdf_back)).
+:- use_module(library(sw/rdf_ent_export)).
 
 % configuration
 :- use_module(library(sw/axiom/rdfs_axioms)).
 :- use_module(library(sw/rule/rdfs_rules)).
 
-:- dynamic
-    axiom/4,
-    recognized_datatype_iri/1,
-    rule/3.
 
-:- multifile
-    axiom/4,
-    recognized_datatype_iri/1,
-    rule/3.
+
+
 
 test :-
-  rdf_back(rdf(rdfs:'Class',rdf:type,rdfs:'Class')).
+  rdf_back(rdf(rdfs:'Class',rdf:type,rdfs:'Class'), Tree),
+  rdf_export_tree(Tree).

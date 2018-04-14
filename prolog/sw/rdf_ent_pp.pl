@@ -2,7 +2,8 @@
   rdf_ent_pp,
   [
     rdf_pp_argument//3, % +Premises, +Rule, +Conclusion
-    rdf_pp_argument//4  % +Premises, +Rule, +Conclusion, +Options
+    rdf_pp_argument//4, % +Premises, +Rule, +Conclusion, +Options
+    rule_label/2        % +Rule, -Label
   ]
 ).
 
@@ -42,30 +43,35 @@ rdf_pp_argument(Premises, Rule, Conclusion, Options) -->
   indent_(Options),
   rule(Rule),
   conclusion(Conclusion),
+  nl,
   premises(Premises, Options).
 
 conclusion(TP) -->
-  rdf_dcg_triple_pattern(TP).
+  rdf_dcg_generalized_triple_pattern(TP).
 
 indent_(Options) -->
   {get_dict(indent, Options, N)},
   indent(N).
 
 premises([H|T], Options) --> !,
-  premise(H, Options),
+  indent_(Options),
+  premise(H),
+  nl,
   premises(T, Options).
 premises([], _) --> "".
 
-premise(TP, Options) -->
-  indent_(Options),
-  rdf_dcg_triple_pattern(TP),
-  nl.
+premise(TP) -->
+  rdf_dcg_generalized_triple_pattern(TP).
 
 rule(Rule) -->
   {rule_label(Rule, Label)},
   "[",
   atom(Label),
   "] ".
+
+
+
+%! rule_label(+Rule:compound, -Label:string) is det.
 
 rule_label(Rule, Label) :-
   format(string(Label), "~w", [Rule]).

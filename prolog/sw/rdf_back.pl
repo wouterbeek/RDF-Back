@@ -28,6 +28,7 @@ require generalized RDF.
 
 :- use_module(library(dcg)).
 :- use_module(library(sw/rdf_ent_pp)).
+:- use_module(library(sw/rdf_prefix)).
 :- use_module(library(sw/rdf_term)).
 
 :- debug(rdf_back).
@@ -70,17 +71,16 @@ rdf_back(S, P, O, Tree) :-
 rdf_back_(Hist1, Conclusion, t(Conclusion,Rule,SubTrees)) :-
   copy_term(Conclusion, Item),
   rdf_back_history_(Hist1, Item, Hist2),
-  gtrace,
-  rdf:rule(Rule, Conclusion, Permises),
+  rdf:rule(Rule, Conclusion, Premises),
   (   debugging(rdf_back)
   ->  length(Hist1, N),
       dcg_with_output_to(
         user_output,
-        rdf_pp_argument(Permises, Rule, Conclusion, _{indent: N})
+        rdf_pp_argument(Premises, Rule, Conclusion, _{indent: N})
       )
   ;   true
   ),
-  maplist(rdf_back_(Hist2), Permises, SubTrees).
+  maplist(rdf_back_(Hist2), Premises, SubTrees).
 
 % If `X' is an instance of a Triple Fragment in `L1', then replace
 % that Triple Fragment with `X'.

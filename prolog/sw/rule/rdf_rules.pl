@@ -16,9 +16,14 @@ Section 8.1.1 of the RDF 1.1 Semantics specification.
 
 rdf:recognized_datatype_iri(xsd:string).
 
-% language-tagged string
+/*
 rdf:rule(rdf(1), rdf(literal(lang(LTag,Lex)),rdf:type,rdf:langString), [rdf(_S,_P,literal(lang(LTag,Lex)))]).
-% typed literal
 rdf:rule(rdf(1), rdf(literal(type(D,Lex)),rdf:type,D), [rdf(_S,_P,literal(type(D,Lex)))]) :-
   rdf:recognized_datatype_iri(D).
 rdf:rule(rdf(2), rdf(P,rdf:type,rdf:'Property'), [rdf(_S,P,_O)]).
+*/
+
+%rdf:rule(rdf(1), rdf(literal(lang(LTag,Lex)),'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/1999/02/22-rdf-syntax-ns#langString'), [rdf(_S,_P,literal(lang(LTag,Lex)))]).
+%rdf:rule(rdf(1), rdf(literal(type(D,Lex)),'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',D), [rdf(_S,_P,literal(type(D,Lex)))]) :-
+%  rdf:recognized_datatype_iri(D).
+%rdf:rule(rdf(2), rdf(P,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/1999/02/22-rdf-syntax-ns#Property'), [rdf(_S,P,_O)]).
