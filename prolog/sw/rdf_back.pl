@@ -66,9 +66,23 @@ rdf:rule(axiom(Module), rdf(S, P, O), []) :-
 %
 % The following options are supported:
 %
+%   * bindings(+boolean)
+%
+%     Whether or not variable bindings are returned as part of the
+%     proof tree.  Default is `false'.
+%
+%   * debug(+boolean)
+%
+%     Whether or not debug messages are printed.  Default is `false'.
+%     This option is present as a temporary workaround for unexpected
+%     debugging/1 behavior.
+%
 %   * sort_premises(+boolean)
 %
-%     Default is `false'.
+%     Whether or not the premises are sorted.  Default is `false'.
+%
+% @tbd Why is debugging/1 showing up in profiling?  If debugging/1
+%      would be compiled out, we could do away with option `debug'.
 
 rdf_back(Conclusion) :-
   rdf_back(Conclusion, _).
