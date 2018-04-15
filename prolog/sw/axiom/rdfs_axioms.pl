@@ -72,7 +72,6 @@ rdf:axiom(rdfs, rdfs:isDefinedBy,   rdfs:subPropertyOf, rdfs:seeAlso).
 rdf:axiom(rdfs, rdfs:'Datatype',    rdfs:subClassOf,    rdfs:'Class').
 */
 
-/*
 rdf:axiom(rdfs, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/2000/01/rdf-schema#domain', 'http://www.w3.org/2000/01/rdf-schema#Resource').
 rdf:axiom(rdfs, 'http://www.w3.org/2000/01/rdf-schema#domain', 'http://www.w3.org/2000/01/rdf-schema#domain', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#Property').
 rdf:axiom(rdfs, 'http://www.w3.org/2000/01/rdf-schema#range', 'http://www.w3.org/2000/01/rdf-schema#domain', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#Property').
@@ -89,7 +88,6 @@ rdf:axiom(rdfs, 'http://www.w3.org/2000/01/rdf-schema#isDefinedBy', 'http://www.
 rdf:axiom(rdfs, 'http://www.w3.org/2000/01/rdf-schema#comment', 'http://www.w3.org/2000/01/rdf-schema#domain', 'http://www.w3.org/2000/01/rdf-schema#Resource').
 rdf:axiom(rdfs, 'http://www.w3.org/2000/01/rdf-schema#label', 'http://www.w3.org/2000/01/rdf-schema#domain', 'http://www.w3.org/2000/01/rdf-schema#Resource').
 rdf:axiom(rdfs, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', 'http://www.w3.org/2000/01/rdf-schema#domain', 'http://www.w3.org/2000/01/rdf-schema#Resource').
-*/
 
 rdf:axiom(rdfs, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://www.w3.org/2000/01/rdf-schema#range', 'http://www.w3.org/2000/01/rdf-schema#Class').
 rdf:axiom(rdfs, 'http://www.w3.org/2000/01/rdf-schema#domain', 'http://www.w3.org/2000/01/rdf-schema#range', 'http://www.w3.org/2000/01/rdf-schema#Class').

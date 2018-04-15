@@ -118,6 +118,9 @@ rdf_back_(Options, Hist1, Conclusion, t(TP,Rule,Bindings,SubTrees)) :-
   ),
   maplist(rdf_back_(Options, Hist2), Premises, SubTrees).
 
+update_history(T, X, [X|T]) :-
+  \+ memberchk(X, T).
+/*
 update_history(Hist, Generic, [Generic|Hist]) :-
   (   member(Specific, Hist),
       subsumes_term(Generic, Specific)
@@ -125,6 +128,7 @@ update_history(Hist, Generic, [Generic|Hist]) :-
       fail
   ;   true
   ).
+*/
 
 
 
