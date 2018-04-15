@@ -1,0 +1,11 @@
+{
+  "hdt": {
+    "default": "https://hdt.lod.labs.vu.nl/graph/LOD-a-lot",
+    "graphs": [
+      {
+        "file": "/home/wbeek/data/LOD-a-lot/LOD-a-lot.hdt",
+        "name": "https://hdt.lod.labs.vu.nl/graph/LOD-a-lot"
+      }
+    ]
+  }
+}
