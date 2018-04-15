@@ -6,8 +6,6 @@
 @version 2018
 */
 
-:- use_module(library(semweb/rdf11_containers), []).
-
 :- use_module(library(sw/rdf_mem)).
 :- use_module(library(sw/rdf_term)).
 
