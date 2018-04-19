@@ -1,7 +1,7 @@
 :- module(
   test_rdf_back,
   [
-    test/0
+    test/0,test2/0
   ]
 ).
 
@@ -28,3 +28,11 @@ test :-
     _,
     _{bindings: true, debug: false, sort_premises: false}
   ).
+
+test2 :-
+  rdf_back(
+    rdf(rdfs:'Class',rdf:type,rdfs:'Class'),
+    Tree,
+    _{bindings: true, debug: true, sort_premises: false}
+  ),
+  rdf_export_tree(Tree).

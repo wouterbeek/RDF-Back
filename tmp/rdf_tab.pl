@@ -2,6 +2,7 @@
 
 :- use_module(library(apply)).
 :- use_module(library(lists)).
+:- use_module(library(tabling)).
 
 :- use_module(library(sw/hdt_db)).
 :- use_module(library(sw/hdt_graph)).
@@ -22,6 +23,9 @@
    rdf_tab(t),
    recognized_datatype_iri(r),
    rule(t, t).
+
+:- table
+   rdf_back/2.
 
 rdf_tab(C) :-
   rdf_tab([], C).
